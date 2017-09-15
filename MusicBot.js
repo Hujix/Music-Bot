@@ -22,6 +22,7 @@ client.on('reconnecting', () => console.log('I am reconnecting now!'));
 client.on('message', async msg => { // eslint-disable-line
 	if (msg.author.bot) return undefined;
 	if (!msg.content.startsWith(PREFIX)) return undefined;
+
 	const args = msg.content.split(' ');
 	const searchString = args.slice(1).join(' ');
 	const url = args[1] ? args[1].replace(/<(.+)>/g, '$1') : '';
@@ -113,14 +114,14 @@ ${serverQueue.songs.map(song => `**-** ${song.title}`).join('\n')}
 
 **Now playing:** ${serverQueue.songs[0].title}
 		`);
-	} else if (msg.content.startsWith(`${PREFIX}pause`)) {
+	} else if (command === `pause`) {
 		if (serverQueue && serverQueue.playing) {
 			serverQueue.playing = false;
 			serverQueue.connection.dispatcher.pause();
 			return msg.channel.send('Paused the music for you!');
 		}
 		return msg.channel.send('There is nothing playing.');
-	} else if (msg.content.startsWith(`${PREFIX}resume`)) {
+	} else if (command === `resume`) {
 		if (serverQueue && !serverQueue.playing) {
 			serverQueue.playing = true;
 			serverQueue.connection.dispatcher.resume();
