@@ -27,7 +27,10 @@ client.on('message', async msg => { // eslint-disable-line
 	const url = args[1] ? args[1].replace(/<(.+)>/g, '$1') : '';
 	const serverQueue = queue.get(msg.guild.id);
 
-	if (msg.content.startsWith(`${PREFIX}play`)) {
+    let command = msg.content.toLowerCase().split(" ")[0];
+    command = command.slice(PREFIX.length);
+
+	if (command === `play`) {
 		const voiceChannel = msg.member.voiceChannel;
 		if (!voiceChannel) return msg.channel.send('I\'m sorry but you need to be in a voice channel to play music!');
 		const permissions = voiceChannel.permissionsFor(msg.client.user);
@@ -80,28 +83,28 @@ Please provide a value to select one of the search results ranging from 1-10.
 			}
 			return handleVideo(video, msg, voiceChannel);
 		}
-	} else if (msg.content.startsWith(`${PREFIX}skip`)) {
+	} else if (command === `skip`) {
 		if (!msg.member.voiceChannel) return msg.channel.send('You are not in a voice channel!');
 		if (!serverQueue) return msg.channel.send('There is nothing playing that I could skip for you.');
 		serverQueue.connection.dispatcher.end('Skip command has been used!');
 		return undefined;
-	} else if (msg.content.startsWith(`${PREFIX}stop`)) {
+	} else if (command === `stop`) {
 		if (!msg.member.voiceChannel) return msg.channel.send('You are not in a voice channel!');
 		if (!serverQueue) return msg.channel.send('There is nothing playing that I could stop for you.');
 		serverQueue.songs = [];
 		serverQueue.connection.dispatcher.end('Stop command has been used!');
 		return undefined;
-	} else if (msg.content.startsWith(`${PREFIX}volume`)) {
+	} else if (command === `volume`) {
 		if (!msg.member.voiceChannel) return msg.channel.send('You are not in a voice channel!');
 		if (!serverQueue) return msg.channel.send('There is nothing playing.');
 		if (!args[1]) return msg.channel.send(`The current volume is: **${serverQueue.volume}**`);
 		serverQueue.volume = args[1];
 		serverQueue.connection.dispatcher.setVolumeLogarithmic(args[1] / 5);
 		return msg.channel.send(`I set the volume to: **${args[1]}**`);
-	} else if (msg.content.startsWith(`${PREFIX}np`)) {
+	} else if (command === `np`) {
 		if (!serverQueue) return msg.channel.send('There is nothing playing.');
 		return msg.channel.send(`Now playing: **${serverQueue.songs[0].title}**`);
-	} else if (msg.content.startsWith(`${PREFIX}queue`)) {
+	} else if (command === `queue`) {
 		if (!serverQueue) return msg.channel.send('There is nothing playing.');
 		return msg.channel.send(`
 __**Song queue:**__
